@@ -1,1 +1,1 @@
-gti commit
+print("Hello, World!")
