@@ -1,16 +1,16 @@
 import pygame 
-import time
-import math
-pygame.init()
+import time 
+import math 
 
+pygame.init() #Pygame ді инициализировать етеді
 
-screen = pygame.display.set_mode((800, 600)) #экран размері пиксельмен 
+screen = pygame.display.set_mode((800, 600))
+
+left = pygame.image.load("sec_hand.png")
+right = pygame.image.load("min_hand.png")
+background = pygame.transform.scale(pygame.image.load("clock.png"), (800, 600)) #задний фонды подгонять етеміз
+
 clock = pygame.time.Clock()
-
-
-leftarm = pygame.image.load("sec_hand.png")
-rightarm = pygame.image.load("min_hand.png")
-mainclock = pygame.transform.scale(pygame.image.load("clock.png"), (800, 600)) #суретті размеріне келтіру
 
 done = False
 
@@ -18,30 +18,31 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-
-    current_time = time.localtime() #localtime уақыт
-    minute = current_time.tm_min
-    second = current_time.tm_sec
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: #егер кнопка басылса және ол ЕСК болса программа жабу
+            done = True
+        
+    
+    
+    time_ = time.localtime()
+    minute = time_.tm_min + 10 #уақытты дұрыстау 
+    sec = time_.tm_sec - 10 
+    
+    minute_rt = minute * 6  + (sec / 60) * 6 #минут стрелка уголын анықтау
+    sec_rt = sec * 6 #үйткені бір секунд 6 градус
+    
+    screen.blit(background, (0,0)) # фонды шығару (таңалған бет үстіне сурет салу), бірінші шығатын сурет, екінші шығу координатасы
+    
+    rotated_r = pygame.transform.rotate(right, -minute_rt)
+    righter = rotated_r.get_rect(center = (screen.get_width() // 2, screen.get_height() // 2)) #центрін тауып орналастыру 
+    screen.blit(rotated_r, righter)
+    
+    rotated_l = pygame.transform.rotate(left, -sec_rt)
+    lefter = rotated_l.get_rect(center = (screen.get_width() // 2, screen.get_height() // 2)) 
+    screen.blit(rotated_l, lefter)
+    
+    pygame.display.flip() #экранды обновлять етеді
+    
+    clock.tick(120)
     
     
     
-    minute_angle = minute_angle = minute * 6 + (second / 60) * 6 #қазіргі минут * 360 градус / 60 минут + қазіргі секундты қосамыз 
-    second_angle = second * 6  
-    
-  
-    screen.blit(mainclock, (0,0)) #фонды шығару
-    
-    # Правильный поворот с учетом центра изображения
-    rotated_rightarm = pygame.transform.rotate(rightarm, -minute_angle)
-    rightarmrect = rotated_rightarm.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))  # Центр экрана
-    screen.blit(rotated_rightarm, rightarmrect)
-
-    rotated_leftarm = pygame.transform.rotate(leftarm, -second_angle)
-    leftarmrect = rotated_leftarm.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))  # Центр экрана
-    screen.blit(rotated_leftarm, leftarmrect)
-
-    
-    pygame.display.flip() #экранды жаңарту
-    clock.tick(120) #fps
-    
-pygame.quit()

@@ -5,7 +5,7 @@ import string
 
 
 for i in string.ascii_uppercase:
-    filename = "test_dir/" + i + ".txt"
+    filename = "C:/Users/sulub/Documents/PP2_labs/Lab6/test_dir/" + i + ".txt"
     print(filename)
     with open(filename, "w") as file:
         file.write("text")

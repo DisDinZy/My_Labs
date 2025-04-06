@@ -1,35 +1,36 @@
 import pygame
+
 pygame.init()
 
+screen = pygame.display.set_mode((800, 600))
+Clock = pygame.time.Clock()
 
-window_size = (800, 600) 
-screen = pygame.display.set_mode(window_size) 
-pygame.display.set_caption("Draw circle")
-ball_color = pygame.Color('red')
-bg_color = pygame.Color('white')
+Back = (255, 255, 255)
+Circle = (255, 0, 0)
 
-ball_pos = [400, 300] 
+ball_rad = 25
+ball_x = 400
+ball_y = 300
+ball_speed = 20
 
-ball_radius = 25 
 
-speed = 20 
+done = False
 
-while True:
+while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-    keys = pygame.key.get_pressed() 
-    if keys[pygame.K_UP]: 
-        ball_pos[1] = max(ball_pos[1] - speed, ball_radius)
-    if keys[pygame.K_DOWN]:
-        ball_pos[1] = min(ball_pos[1] + speed, window_size[1] - ball_radius)
-    if keys[pygame.K_LEFT]:
-        ball_pos[0] = max(ball_pos[0] - speed, ball_radius)
-    if keys[pygame.K_RIGHT]:
-        ball_pos[0] = min(ball_pos[0] + speed, window_size[0] - ball_radius)
+            done = True
+            
+    but = pygame.key.get_pressed()    #басылып тұрған клавишаны сақтайды
+    if but[pygame.K_UP] and ball_y - ball_rad > 0 : ball_y -= ball_speed# радисуы мен қазіргі координата соотношениясы экранның значениясымен салыстыру
+    if but[pygame.K_DOWN]and ball_y + ball_rad < 600: ball_y += ball_speed
+    if but[pygame.K_LEFT]and ball_x - ball_rad > 0: ball_x -= ball_speed
+    if but[pygame.K_RIGHT]and ball_x + ball_rad < 800: ball_x += ball_speed
     
-    screen.fill(bg_color)
-    pygame.draw.circle(screen, ball_color, ball_pos, ball_radius)
-    pygame.display.flip()
-    pygame.time.Clock().tick(24)
+    screen.fill(Back) # артқы фонды қояды
+    
+    pygame.draw.circle(screen, Circle,(ball_x, ball_y), ball_rad ) #шеңберді салады
+    
+    
+    pygame.display.flip() # обновление
+    Clock.tick(120) #FPS

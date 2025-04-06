@@ -3,96 +3,62 @@ import os
 
 pygame.init()
 
-# Загрузка плейлиста
-playlist = []
-music_folder = "C:\\pp22\\pp2\\lab7\\musics"
-allmusic = os.listdir(music_folder)
+pygame.mixer.init() #музыка шығару үшін микшер 
 
-for song in allmusic:
-    if song.endswith(".mp3"):
-        playlist.append(os.path.join(music_folder, song))
+screen = pygame.display.set_mode((800, 600))
 
-# Настройки экрана
-WIDTH, HEIGHT = 800, 800
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Straykids")
-clock = pygame.time.Clock()
+playlist = [ 
+            "1.mp3",
+            "2.mp3",
+            "3.mp3",
+            "4.mp3"
+            ]
 
-# Загрузка изображений
-background = pygame.image.load("C:\\pp22\\pp2\\lab7\\music-elements\\background1.png")
-background = pygame.transform.scale(background, (WIDTH, HEIGHT))  # Масштабируем, если нужно
+play_ = 0
 
-# Панель управления
-panel_width, panel_height = 500, 100
-bg = pygame.Surface((panel_width, panel_height))
-bg.fill((255, 255, 255))
+pygame.mixer.music.load(playlist[play_])
 
-font = pygame.font.SysFont(None, 30)
+clock = pygame.transform.scale(pygame.image.load("35019762_8201782.jpg"), (800, 600)) # просто обой
 
-# Загрузка иконок кнопок
-btn_size = (60, 60)
-playb = pygame.transform.scale(pygame.image.load("C:\\pp22\\pp2\\lab7\\music-elements\\play.png"), btn_size)
-pausb = pygame.transform.scale(pygame.image.load("C:\\pp22\\pp2\\lab7\\music-elements\\pause.png"), btn_size)
-nextb = pygame.transform.scale(pygame.image.load("C:\\pp22\\pp2\\lab7\\music-elements\\next.png"), btn_size)
-prevb = pygame.transform.scale(pygame.image.load("C:\\pp22\\pp2\\lab7\\music-elements\\back.png"), btn_size)
+def play_music():
+    pygame.mixer.music.play(loops = 0, start = 0.0)
+    
+def stop_music():
+    pygame.mixer.music.stop()
+    
+def next_music():
+    global play_
+    play_ = (play_ + 1) % len(playlist) # соңғы трек болса басынан басталуына жауап береді және индекс келесі қосады
+    pygame.mixer.music.load(playlist[play_])
+    play_music()
+    
+def prev_music():
+    global play_
+    play_ = (play_ - 1) % len(playlist) # индекстен бірді азайтады
+    pygame.mixer.music.load(playlist[play_]) 
+    play_music()
+    
+    
+done = False
 
-# Индекс текущей песни и статус воспроизведения
-index = 0
-aplay = False
-
-pygame.mixer.music.load(playlist[index]) 
-pygame.mixer.music.play(1)
-aplay = True 
-
-run = True
-
-while run:
-    for event in pygame.event.get():
+while not done:
+    for event in pygame.event.get(): # кнопкалар басылғанда орындалатын әрекеттер 
         if event.type == pygame.QUIT:
-            run = False
-            pygame.quit()
-            exit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                if aplay:
-                    pygame.mixer.music.pause()
-                else:
-                    pygame.mixer.music.unpause()
-                aplay = not aplay
-            if event.key == pygame.K_RIGHT:
-                index = (index + 1) % len(playlist)
-                pygame.mixer.music.load(playlist[index])
-                pygame.mixer.music.play()
-            if event.key == pygame.K_LEFT:
-                index = (index - 1) % len(playlist)
-                pygame.mixer.music.load(playlist[index])
-                pygame.mixer.music.play()
-
-    # Ограничение длины названия трека
-    max_length = 30
-    song_name = os.path.basename(playlist[index])
-    if len(song_name) > max_length:
-        song_name = song_name[:max_length] + "..."
-    text = font.render(song_name, True, (20, 20, 50))
-
-    # Отрисовка фона по центру экрана
-    screen.blit(background, (0, 0))
-
-    # Центрирование панели управления
-    panel_x = (WIDTH - panel_width) // 2
-    panel_y = HEIGHT - panel_height - 50
-    screen.blit(bg, (panel_x, panel_y))
-
-    # Размещение текста по центру панели
-    text_x = panel_x + (panel_width - text.get_width()) // 2
-    text_y = panel_y + 15
-    screen.blit(text, (text_x, text_y))
-
-    # Размещение кнопок
-    btn_y = panel_y + 40  # Отступ от верхней границы панели
-    screen.blit(prevb, (panel_x + 50, btn_y))
-    screen.blit(pausb if aplay else playb, (panel_x + (panel_width - btn_size[0]) // 2, btn_y))
-    screen.blit(nextb, (panel_x + panel_width - 110, btn_y))
-
-    clock.tick(24)
-    pygame.display.update()
+            done = True
+            
+            
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                play_music()
+            elif event.key == pygame.K_DOWN:
+                stop_music()
+            elif event.key == pygame.K_RIGHT:
+                next_music()
+            elif event.key == pygame.K_LEFT:
+                prev_music()
+        
+    
+    screen.blit(clock, (0,0)) # экранға обой шығару
+    pygame.display.flip()
+    
+    
